@@ -46,22 +46,22 @@ pipeline {
                 sh 'vagrant ssh -c "cd /mnt/share; ng e2e"'
             }
         }
-        stage("DOCKER deliveery") {
+        stage("DOCKER delivery") {
             steps {  
                 withCredentials([
                         usernamePassword(credentialsId: 'a9a0df0c-944f-4e74-a5df-52a2c65b3688',
                         passwordVariable: 'DOCKER_PASS',
                         usernameVariable: 'DOCKER_USER')
                         ]) {
-                    echo "============================= LOGIN =============================" 
+                    echo "============================= DockerHub LOGIN =============================" 
                         sh 'vagrant ssh -c "sudo docker login -u=$DOCKER_USER -p=$DOCKER_PASS"'
                     }
 
                 withCredentials([string(credentialsId: 'DockerHubRepository', variable: 'SECRET')])
                 {
-                    echo "============================= BUILD =============================" 
+                    echo "============================= Docker BUILD =============================" 
                     sh 'vagrant ssh -c "cd /mnt/share; sudo docker build -t $SECRET:${BUILD_NUMBER} ."'
-                    echo "============================= PUSH  ============================="
+                    echo "============================= Docker PUSH  ============================="
                     sh 'vagrant ssh -c "sudo docker push $SECRET:${BUILD_NUMBER}"'
                 }
             }
