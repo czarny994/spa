@@ -1,0 +1,6 @@
+/e2e
+/node_modules
+.git
+Vagrantfile
+Jenkinsfile
+/scripts
