@@ -46,31 +46,34 @@ pipeline {
                 sh 'vagrant ssh -c "cd /mnt/share; ng e2e"'
             }
         }
-        stage("DOCKER delivery") {
+        stage("DOCKER deliveery") {
             steps {  
                 withCredentials([
                         usernamePassword(credentialsId: 'a9a0df0c-944f-4e74-a5df-52a2c65b3688',
                         passwordVariable: 'DOCKER_PASS',
                         usernameVariable: 'DOCKER_USER')
                         ]) {
-                    echo "============================= DockerHub LOGIN =============================" 
+                    echo "============================= LOGIN =============================" 
                         sh 'vagrant ssh -c "sudo docker login -u=$DOCKER_USER -p=$DOCKER_PASS"'
                     }
 
                 withCredentials([string(credentialsId: 'DockerHubRepository', variable: 'SECRET')])
                 {
-                    echo "============================= Docker BUILD =============================" 
+                    echo "============================= BUILD =============================" 
                     sh 'vagrant ssh -c "cd /mnt/share; sudo docker build -t $SECRET:${BUILD_NUMBER} ."'
-                    echo "============================= Docker PUSH  ============================="
+                    echo "============================= PUSH  ============================="
                     sh 'vagrant ssh -c "sudo docker push $SECRET:${BUILD_NUMBER}"'
                 }
             }
         }
         stage("Deploy") {
             steps {  
-                echo "============================= Deploy ============================="  
-                sh "docker pull $SECRET:${BUILD_NUMBER}"
-                sh "docker run -d -p 80:80 --name app $SECRET:${BUILD_NUMBER}"
+                withCredentials([string(credentialsId: 'DockerHubRepository', variable: 'SECRET')])
+                {
+                    echo "============================= Deploy ============================="  
+                    sh "docker pull $SECRET:${BUILD_NUMBER}"
+                    sh "docker run -d -p 80:80 --name app $SECRET:${BUILD_NUMBER}"
+                }
             }
         }
     }
