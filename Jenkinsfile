@@ -71,8 +71,8 @@ pipeline {
                 withCredentials([string(credentialsId: 'DockerHubRepository', variable: 'SECRET')])
                 {
                     echo "============================= Deploy ============================="  
-                    sh "docker pull $SECRET:${BUILD_NUMBER}"
-                    sh "docker run -d -p 80:80 --name app $SECRET:${BUILD_NUMBER}"
+                    sh "sudo docker pull $SECRET:${BUILD_NUMBER}"
+                    sh "sudo docker run -d -p 80:80 --name app $SECRET:${BUILD_NUMBER}"
                 }
             }
         }
