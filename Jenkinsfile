@@ -28,7 +28,7 @@ pipeline {
         stage("Lint") {
             steps {  
                 echo "============================= ng lint ============================="  
-                sh 'vagrant ssh -c cd "/mnt/share; npm install --save-dev @angular-devkit/build-angular"'
+                sh 'vagrant ssh -c "cd /mnt/share; npm install --save-dev @angular-devkit/build-angular"'
                 sh 'vagrant ssh -c "cd /mnt/share; ng lint"'
             }
         }
